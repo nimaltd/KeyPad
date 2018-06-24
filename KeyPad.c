@@ -33,6 +33,8 @@ uint16_t	KeyPad_Scan(void)
 			if(HAL_GPIO_ReadPin((GPIO_TypeDef*)_KEYPAD_ROW_GPIO_PORT[r],_KEYPAD_ROW_GPIO_PIN[r])==GPIO_PIN_RESET)
 			{
 				_KEYPAD_DELAY(_KEYPAD_DEBOUNCE_TIME_MS);
+				while(HAL_GPIO_ReadPin((GPIO_TypeDef*)_KEYPAD_ROW_GPIO_PORT[r],_KEYPAD_ROW_GPIO_PIN[r])==GPIO_PIN_RESET)
+					_KEYPAD_DELAY(5);
 				if(HAL_GPIO_ReadPin((GPIO_TypeDef*)_KEYPAD_ROW_GPIO_PORT[r],_KEYPAD_ROW_GPIO_PIN[r])==GPIO_PIN_RESET)
 				{
 					key |= 1<<c;					
