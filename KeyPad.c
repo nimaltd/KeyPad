@@ -13,10 +13,26 @@ KeyPad_t	KeyPad;
 //#############################################################################################
 void	KeyPad_Init(void)
 {
+	GPIO_InitTypeDef	gpio;
 	KeyPad.ColumnSize = sizeof(_KEYPAD_COLUMN_GPIO_PIN)/2;
 	KeyPad.RowSize = sizeof(_KEYPAD_ROW_GPIO_PIN)/2;
 	for(uint8_t	i=0 ; i<KeyPad.ColumnSize ; i++)
+	{
+		gpio.Mode = GPIO_MODE_OUTPUT_PP;
+		gpio.Pull = GPIO_NOPULL;
+		gpio.Speed = GPIO_SPEED_FREQ_LOW;
+		gpio.Pin = _KEYPAD_COLUMN_GPIO_PIN[i];
+		HAL_GPIO_Init((GPIO_TypeDef*)_KEYPAD_COLUMN_GPIO_PORT[i],&gpio);
 		HAL_GPIO_WritePin((GPIO_TypeDef*)_KEYPAD_COLUMN_GPIO_PORT[i],_KEYPAD_COLUMN_GPIO_PIN[i],GPIO_PIN_SET);
+	}
+	for(uint8_t	i=0 ; i<KeyPad.RowSize ; i++)
+	{
+		gpio.Mode = GPIO_MODE_INPUT;
+		gpio.Pull = GPIO_PULLUP;
+		gpio.Speed = GPIO_SPEED_FREQ_LOW;
+		gpio.Pin = _KEYPAD_ROW_GPIO_PIN[i];
+		HAL_GPIO_Init((GPIO_TypeDef*)_KEYPAD_ROW_GPIO_PORT[i],&gpio);		
+	}
 }
 //#############################################################################################
 uint16_t	KeyPad_Scan(void)
@@ -60,8 +76,8 @@ uint16_t	KeyPad_WaitForKey(uint32_t	Timeout_ms)
 		}
 		_KEYPAD_DELAY(_KEYPAD_DEBOUNCE_TIME_MS);	
 	}
-	Timeout_ms = Timeout_ms / _KEYPAD_DEBOUNCE_TIME_MS;
-	while(Timeout_ms>0)
+	uint32_t	StartTime = HAL_GetTick();
+	while(HAL_GetTick()-StartTime < Timeout_ms)
 	{
 		keyRead = KeyPad_Scan();
 		if(keyRead!=0)
@@ -70,7 +86,6 @@ uint16_t	KeyPad_WaitForKey(uint32_t	Timeout_ms)
 			return keyRead;	
 		}
 		_KEYPAD_DELAY(_KEYPAD_DEBOUNCE_TIME_MS);	
-		Timeout_ms--;
 	}
 	KeyPad.LastKey=0;
 	return 0;
