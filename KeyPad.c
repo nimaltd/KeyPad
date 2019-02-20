@@ -91,4 +91,46 @@ uint16_t	KeyPad_WaitForKey(uint32_t	Timeout_ms)
 	return 0;
 }
 //#############################################################################################
-
+char	KeyPad_WaitForKeyGetChar(uint32_t	Timeout_ms)
+{
+	switch(KeyPad_WaitForKey(Timeout_ms))
+	{
+		case 0x0000:
+			return 0;
+		case 0x0101:
+			return '1';
+		case 0x0201:
+			return '2';
+		case 0x0401:
+			return '3';
+		case 0x0801:
+			return 'A';
+		case 0x0102:
+			return '4';
+		case 0x0202:
+			return '5';
+		case 0x0402:
+			return '6';
+		case 0x0802:
+			return 'B';
+		case 0x0104:
+			return '7';
+		case 0x0204:
+			return '8';		
+		case 0x0404:
+			return '9';
+		case 0x0804:
+			return 'C';
+		case 0x0108:
+			return '*';				
+		case 0x0208:
+			return '0';				
+		case 0x0408:
+			return '#';
+		case 0x0808:
+			return 'D';
+		
+		default:
+			return 0;		
+	}	
+}

@@ -16,5 +16,6 @@ typedef struct
 
 void			KeyPad_Init(void);
 uint16_t	KeyPad_WaitForKey(uint32_t	Timeout_ms);
+char			KeyPad_WaitForKeyGetChar(uint32_t	Timeout_ms);
 
 #endif
